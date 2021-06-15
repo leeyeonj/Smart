@@ -2,7 +2,7 @@ package model.DTO;
 
 public class EmployeeDTO {
 	String employeeId;
-	String empUserId;
+	String empUserid;
 	String empPw;
 	String empName;
 	String hireDate;
@@ -17,11 +17,11 @@ public class EmployeeDTO {
 	public void setEmployeeId(String employeeId) {
 		this.employeeId = employeeId;
 	}
-	public String getEmpUserId() {
-		return empUserId;
+	public String getEmpUserid() {
+		return empUserid;
 	}
-	public void setEmpUserId(String empUserId) {
-		this.empUserId = empUserId;
+	public void setEmpUserid(String empUserid) {
+		this.empUserid = empUserid;
 	}
 	public String getEmpPw() {
 		return empPw;

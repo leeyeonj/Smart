@@ -22,70 +22,136 @@ public class EmployeeDAO {
 	Integer result;
 	ResultSet rs;
 	static {
-		jdbcDriver= "oracle.jdbc.driver.OracleDriver";
+		jdbcDriver = "oracle.jdbc.driver.OracleDriver";
 		jdbcUrl = "jdbc:oracle:thin:@localhost:1521:xe";
 	}
 	public static void getConnect() {
 		try {
 			Class.forName(jdbcDriver);
 			conn = DriverManager.getConnection
-					(jdbcUrl,"SUBIN1","ORACLE");
+					(jdbcUrl,"YJLEE","ORACLE");
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	public List<EmployeeDTO> getEmpList() {
-		List<EmployeeDTO> list = new ArrayList<EmployeeDTO>();
-		sql = "select  " + COLUMNS + "  from employees";
+	public void empDelete(String empId) {
+		sql = " delete from employees "
+			+ " where employee_id = ?";
 		getConnect();
 		try {
-			pstmt = conn.prepareStatement(sql);//쿼리문 날려줌
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, empId);
+			int i = pstmt.executeUpdate();
+			System.out.println(i + "개가 삭제되었습니다.");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close();
+		}	
+	}
+	public void empUpdate(EmployeeDTO dto) {//직원 수정
+		sql = " update employees "
+			+ " set JOB_ID = ?, PH_NUMBER=?, OFFICE_NUMBER =?,"
+			+ "     EMAIL = ?, EMP_ADDRESS = ? "
+			+ " where employee_id = ?";
+		getConnect();
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, dto.getJobId());
+			pstmt.setString(2, dto.getPhNumber());
+			pstmt.setString(3, dto.getOfficeNumber());
+			pstmt.setString(4, dto.getEmail());
+			pstmt.setString(5, dto.getEmpAddress());
+			pstmt.setString(6, dto.getEmployeeId());
+			int i = pstmt.executeUpdate();
+			System.out.println(i + "개가 수정되었습니다.");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close();
+		}
+	}
+	public EmployeeDTO empInfo(String empId) {//직원 정보
+		EmployeeDTO dto = new EmployeeDTO();
+		sql = "select " + COLUMNS + " from employees "
+			+ " where employee_id = ?";
+		getConnect();
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, empId);
 			rs = pstmt.executeQuery();
-			while(rs.next()) {//여러개 있을 수 있으니 
-				EmployeeDTO dto = new EmployeeDTO();//한행씩 받아와 디티오에 넣어라
+			if(rs.next()) {
 				dto.setEmployeeId(rs.getString("EMPLOYEE_ID"));
-				dto.setEmpUserId(rs.getString("EMP_USERID"));
+				dto.setEmpUserid(rs.getString(2));
 				dto.setEmpPw(rs.getString("EMP_PW"));
-				dto.setEmpName(rs.getString("EMP_NAME"));//숫자 혹은 컬럼명으로 받아올수 있다.
+				dto.setEmpName(rs.getString(4));
 				dto.setHireDate(rs.getString("HIRE_DATE"));
 				dto.setJobId(rs.getString("JOB_ID"));
 				dto.setPhNumber(rs.getString("PH_NUMBER"));
 				dto.setOfficeNumber(rs.getString("OFFICE_NUMBER"));
 				dto.setEmail(rs.getString("EMAIL"));
 				dto.setEmpAddress(rs.getString("EMP_ADDRESS"));
-				list.add(dto);//리스트에 계속 쌓임
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
 			close();
 		}
-		return list;//emplistpage에 보냄
+		return dto;
 	}
 	
-	public int getEmpNo() {
+	
+	public List<EmployeeDTO> getEmpList() {//직원 리스트
+		List<EmployeeDTO> list = new ArrayList<EmployeeDTO>();
+		sql = "select  " + COLUMNS + "  from employees";
 		getConnect();
-		sql = "select nvl(max(employee_id),10000) + 1 from employees";
 		try {
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
-			rs.next();//한칸 아래로(?)
-			result = rs.getInt(1);
-		}catch (SQLException e) {
+			while(rs.next()) {
+				EmployeeDTO dto = new EmployeeDTO();
+				dto.setEmployeeId(rs.getString("EMPLOYEE_ID"));
+				dto.setEmpUserid(rs.getString(2));
+				dto.setEmpPw(rs.getString("EMP_PW"));
+				dto.setEmpName(rs.getString(4));
+				dto.setHireDate(rs.getString("HIRE_DATE"));
+				dto.setJobId(rs.getString("JOB_ID"));
+				dto.setPhNumber(rs.getString("PH_NUMBER"));
+				dto.setOfficeNumber(rs.getString("OFFICE_NUMBER"));
+				dto.setEmail(rs.getString("EMAIL"));
+				dto.setEmpAddress(rs.getString("EMP_ADDRESS"));
+				list.add(dto);
+			}
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
 			close();
 		}
-		return result;//pagecontroll로 dao.getEmpNo로 반환
+		return list;
 	}
-	public void empInsert(EmployeeDTO dto) {
-		sql="insert into employees ( " + COLUMNS + " ) "
-			+ "values(?,?,?,?,?,?,?,?,?,?)";
+	public int getEmpNo() {//직원번호 자동 생성
+		getConnect();
+		sql = "select nvl(max(employee_id), 10000) + 1 from employees";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			rs.next();
+			result = rs.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close();
+		}
+		return result;
+	}
+	public void empInsert(EmployeeDTO dto) {//직원정보 입력
+		sql = "insert into employees (  " + COLUMNS + " )"
+			+ " values(?,?,?,?,?,?,?,?,?,?)";
 		getConnect();
 		try {
-			pstmt = conn.prepareStatement(sql);	
-			pstmt.setString(1, dto.getEmployeeId());//setString은getEmployeeId타입
-			pstmt.setString(2, dto.getEmpUserId());
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, dto.getEmployeeId());
+			pstmt.setString(2, dto.getEmpUserid());
 			pstmt.setString(3, dto.getEmpPw());
 			pstmt.setString(4, dto.getEmpName());
 			pstmt.setString(5, dto.getHireDate());
@@ -93,10 +159,9 @@ public class EmployeeDAO {
 			pstmt.setString(7, dto.getPhNumber());
 			pstmt.setString(8, dto.getOfficeNumber());
 			pstmt.setString(9, dto.getEmail());
-			pstmt.setString(10, dto.getEmpAddress());
+			pstmt.setString(10, dto.getEmpAddress());	
 			result = pstmt.executeUpdate();
-			System.out.println(result+"개행이 저장되었습니다.");
-			
+			System.out.println(result + "개행이 저장되었습니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
@@ -104,12 +169,11 @@ public class EmployeeDAO {
 		}
 	}
 	private void close() {
-		if(rs != null)	try {rs.close();} //닫아줘야..?
+		if(rs != null)	try {rs.close();} 
 						catch (SQLException e) {}
 		if(pstmt != null)	try {pstmt.close();} 
 						catch (SQLException e) {}
 		if(conn != null)	try {conn.close();} 
 						catch (SQLException e) {}
-	}
-	
+	}	
 }

@@ -8,17 +8,17 @@ import model.DTO.EmployeeDTO;
 public class EmployeeJoinPage {
 	public void empInsert(HttpServletRequest request) {
 		EmployeeDTO dto = new EmployeeDTO();
-		dto.setEmail(request.getParameter("email"));
+		dto.setEmail(request.getParameter("email"));//dto가 가지고있는 멤버필드에 담음
 		dto.setEmpAddress(request.getParameter("empAddress"));
 		dto.setEmployeeId(request.getParameter("employeeId"));
 		dto.setEmpName(request.getParameter("empName"));
 		dto.setEmpPw(request.getParameter("empPw"));
-		dto.setEmpUserId(request.getParameter("empUserid"));
+		dto.setEmpUserid(request.getParameter("empUserid"));
 		dto.setHireDate(request.getParameter("hireDate"));
 		dto.setJobId(request.getParameter("jobId"));
 		dto.setOfficeNumber(request.getParameter("officeNumber"));
 		dto.setPhNumber(request.getParameter("phNumber"));
 		EmployeeDAO dao = new EmployeeDAO();
-		dao.empInsert(dto);//다오에 디티오 전달
+		dao.empInsert(dto);//다오에 디티오 전달 //인서트에 전달
 	}
 }

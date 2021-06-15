@@ -8,41 +8,65 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class EmployeeController extends HttpServlet
-	implements Servlet{
+implements Servlet{
 	public void doProcess(HttpServletRequest request, 
-			HttpServletResponse response)
-					throws ServletException, IOException{
+			HttpServletResponse response) 
+					throws ServletException, IOException {
 		String RequestURI = request.getRequestURI();
 		String contextPath = request.getContextPath();
-		String command = RequestURI.substring(contextPath.length());
+		String command = RequestURI.substring(
+				contextPath.length());
 		if(command.equals("/empList.em")) {
 			EmployeeListPage action = new EmployeeListPage();
 			action.empList(request);
-			RequestDispatcher dispatchar = 
-					request.getRequestDispatcher("employee/employeeList.jsp");
-			dispatchar.forward(request, response);
+			RequestDispatcher dispatcher =
+					request.getRequestDispatcher(
+							"employee/employeeList.jsp");
+			dispatcher.forward(request, response);
 		}else if(command.equals("/empRegest.em")) {
 			EmployeeNumPage action = new EmployeeNumPage();
 			action.getNum(request);
 			RequestDispatcher dispatcher = 
-					request.getRequestDispatcher("employee/employeeForm.jsp");
+					request.getRequestDispatcher(
+							"employee/employeeForm.jsp");
 			dispatcher.forward(request, response);
 		}else if(command.equals("/empJoin.em")) {
-			EmployeeJoinPage action = 
-					new EmployeeJoinPage();
+			EmployeeJoinPage action = new EmployeeJoinPage();
 			action.empInsert(request);
+			response.sendRedirect("empList.em");
+		}else if(command.equals("/empInfo.em")) {
+			EmployeeInfoPage action = new EmployeeInfoPage();//페이지 컨트롤러 만들어주고
+			action.empInfo(request);//리퀘스트 전달
+			RequestDispatcher dispatcher =
+					request.getRequestDispatcher(""
+							+ "employee/employeeInfo.jsp");
+			dispatcher.forward(request, response);
+		}else if(command.equals("/empModify.em")) {
+			EmployeeInfoPage action = new EmployeeInfoPage();
+			action.empInfo(request);
+			RequestDispatcher dispatcher =
+					request.getRequestDispatcher(""
+							+ "employee/employeeModify.jsp");
+			dispatcher.forward(request, response);
+		}else if(command.equals("/empModifyOk.em")) {
+			EmployeeModifyPage action = new EmployeeModifyPage();
+			action.empModify(request);
+			response.sendRedirect("empList.em");
+		}else if(command.equals("/empDelete.em")) {
+			EmployeeDeletePage action = new EmployeeDeletePage();
+			action.empDelete(request);
 			response.sendRedirect("empList.em");
 		}
 	}
 	@Override
 	protected void doGet(HttpServletRequest req, 
 			HttpServletResponse resp) throws ServletException, IOException {
-
+		// TODO Auto-generated method stub
 		doProcess(req, resp);
 	}
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+		// TODO Auto-generated method stub
 		doProcess(req, resp);
 	}
 }
