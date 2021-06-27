@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8" isELIgnored="false"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,8 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-<a href="memDetail.mem" >회원정보</a> | 
-<a href="memPwChange.mem">비밀번호 변경</a> | 
-<a href="memOut.mem">회원탈퇴</a>
+${authInfo.userId }님 ${money } 원이 결제 되었습니다.<br />
+<a href="purchaseCon.gd" >구매리스트</a>
 </body>
 </html>

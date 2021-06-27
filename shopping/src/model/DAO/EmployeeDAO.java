@@ -34,6 +34,23 @@ public class EmployeeDAO {
 			e.printStackTrace();
 		}
 	}
+	public void pwChange(String empId, String empPw) {
+		sql = " update employee "
+			+ " set emp_pw = ? "
+			+ " where employee_id = ? ";
+		getConnect();
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, empPw);
+			pstmt.setString(2, empId);
+			int i = pstmt.executeUpdate();
+			System.out.println(i + "개가 수정되었습니다.");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close();
+		}
+	}
 	public void empDelete(String empId) {
 		sql = " delete from employees "
 			+ " where employee_id = ?";
@@ -51,9 +68,9 @@ public class EmployeeDAO {
 	}
 	public void empUpdate(EmployeeDTO dto) {//직원 수정
 		sql = " update employees "
-			+ " set JOB_ID = ?, PH_NUMBER=?, OFFICE_NUMBER =?,"
+			+ " set JOB_ID = ?, PH_NUMBER= ?, OFFICE_NUMBER = ?,"
 			+ "     EMAIL = ?, EMP_ADDRESS = ? "
-			+ " where employee_id = ?";
+			+ " where EMP_USERID = ?";
 		getConnect();
 		try {
 			pstmt = conn.prepareStatement(sql);
@@ -62,7 +79,7 @@ public class EmployeeDAO {
 			pstmt.setString(3, dto.getOfficeNumber());
 			pstmt.setString(4, dto.getEmail());
 			pstmt.setString(5, dto.getEmpAddress());
-			pstmt.setString(6, dto.getEmployeeId());
+			pstmt.setString(6, dto.getEmpUserid());
 			int i = pstmt.executeUpdate();
 			System.out.println(i + "개가 수정되었습니다.");
 		} catch (SQLException e) {
@@ -167,6 +184,35 @@ public class EmployeeDAO {
 		}finally {
 			close();
 		}
+	}
+	public EmployeeDTO empDetail(String empId) {//직원 상세정보//과제
+		EmployeeDTO dto = null;
+		sql = "select " + COLUMNS + " from employees "
+			+ " where emp_userid = ?";
+		getConnect();
+		try {
+			dto = new EmployeeDTO();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, empId);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				dto.setEmployeeId(rs.getString("EMPLOYEE_ID"));
+				dto.setEmpUserid(rs.getString(2));
+				dto.setEmpPw(rs.getString("EMP_PW"));
+				dto.setEmpName(rs.getString(4));
+				dto.setHireDate(rs.getString("HIRE_DATE"));
+				dto.setJobId(rs.getString("JOB_ID"));
+				dto.setPhNumber(rs.getString("PH_NUMBER"));
+				dto.setOfficeNumber(rs.getString("OFFICE_NUMBER"));
+				dto.setEmail(rs.getString("EMAIL"));
+				dto.setEmpAddress(rs.getString("EMP_ADDRESS"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close();
+		}
+		return dto;
 	}
 	private void close() {
 		if(rs != null)	try {rs.close();} 

@@ -1,6 +1,6 @@
 package model.DTO;
 
-public class AuthInfo {
+public class AuthInfo {//내 로그인 정보
 	String userId;
 	String userEmail;
 	String grade;
