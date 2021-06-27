@@ -46,6 +46,24 @@ implements Servlet{
 			DeliveryOkPage action = new DeliveryOkPage();
 			action.execute(request);
 			response.sendRedirect("venta.vnt");
+		}else if(command.equals("/purchaseTotal.vnt")) {
+			PurchaseTotalPage action = new PurchaseTotalPage();
+			action.purchaseTotal(request);
+			RequestDispatcher dispatcher = 
+					request.getRequestDispatcher("sales/purchaseTotal.jsp");
+			dispatcher.forward(request, response);
+		}else if(command.equals("/yearTotal.vnt")) {
+			YearTotalPage action = new YearTotalPage();
+			action.yearTotal(request);
+			RequestDispatcher dispatcher = 
+					request.getRequestDispatcher("sales/yearTotal.jsp");
+			dispatcher.forward(request, response);
+		}else if(command.equals("/monthTotal.vnt")) {
+			MonthTotalPage action = new MonthTotalPage();
+			action.monthTotal(request);
+			RequestDispatcher dispatcher = 
+					request.getRequestDispatcher("sales/monthTotal.jsp");
+			dispatcher.forward(request, response);
 		}
 	}
 	

@@ -8,7 +8,10 @@
 <title>Insert title here</title>
 </head>
 <body>
-고객 판매리스트 | <a href="customerTotal.vnt" target="_blank">고객별 판매 현황</a> | 상품별 판매 현황 | 년별 판매 현황 | 월별 판매 현황
+고객 판매리스트 | <a href="customerTotal.vnt" target="_blank">고객별 판매 현황</a> 
+			| <a href="purchaseTotal.vnt" target="_blank">상품별 판매 현황</a> 
+			| <a href="yearTotal.vnt" target="_blank">년별 판매 현황</a> 
+			| <a href="monthTotal.vnt" target="_blank">월별 판매 현황</a>
 
 <br />
 <form action="venta.vnt" method="post" name="frm">

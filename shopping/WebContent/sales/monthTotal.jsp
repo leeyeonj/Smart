@@ -14,9 +14,9 @@
       function drawVisualization() { 
          var data = google.visualization.arrayToDataTable(${googleList});
          var options = {
-               title : '고객별 판매 현황',
-               vAxis: {title: '금액 및 수량'},
-               hAxis: {title: '사용자'}, 
+               title : '월별 판매 현황',
+               vAxis: {title: '구매 월'},
+               hAxis: {title: '구매 합'}, 
                seriesType: 'bars',
                series: {5: {type: 'line'}}
             };
@@ -30,12 +30,12 @@
 <div id="chart_div" style="width:900px; height: 500px;"></div>
 고객별 현황<br />
 <table>
-    <tr><td>이름/아이디</td><td>총 구매금액</td><td>횟수</td>
-    	<td>평균금액</td></tr>
+    <tr><td>구매 월</td><td>상품번호</td><td>구매합</td>
+    	</tr>
 	<c:forEach items="${list }" var="dto">
-    	<tr><td>${dto.memName }/${dto.memId }</td>
-    		<td>${dto.sumPrice }</td><td>${dto.count }</td>
-    		<td>${dto.avg }</td></tr>
+    	<tr><td>${dto.purchaseDate }</td>
+    		<td>${dto.prodNum }</td>
+    		<td>${dto.sumPurchase }</td></tr>
 </c:forEach>
 </table>
 </body>

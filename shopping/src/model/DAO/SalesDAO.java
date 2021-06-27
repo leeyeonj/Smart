@@ -8,6 +8,8 @@ import java.util.List;
 import model.DTO.ClientSaleDTO;
 import model.DTO.CustomerTotalDTO;
 import model.DTO.DeliveryDTO;
+import model.DTO.MonthTotalDTO;
+import model.DTO.PurchaseTotalDTO;
 
 public class SalesDAO extends DataBaseInfo{
 	
@@ -106,6 +108,79 @@ public class SalesDAO extends DataBaseInfo{
 				dto.setSumPrice(rs.getString(3));
 				dto.setCount(rs.getString(4));
 				dto.setAvg(rs.getString(5));
+				list.add(dto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close();
+		}
+		return list;
+	}
+	
+	public List<PurchaseTotalDTO> purchaseTotal(){//상품별 합계
+		List<PurchaseTotalDTO> list = new ArrayList<PurchaseTotalDTO>();
+		sql = " select prod_num,sum(purchase_qty) "
+				+ " from purchase_list "
+				+ " GROUP by prod_num ";
+		getConnect();
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				PurchaseTotalDTO dto = new PurchaseTotalDTO();
+				dto.setProdNum(rs.getString(1));
+				dto.setSumPrice(rs.getString(2));
+				list.add(dto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close();
+		}
+		return list;
+	}
+	public List<MonthTotalDTO> monthTotal(){
+		List<MonthTotalDTO> list = new ArrayList<MonthTotalDTO>();
+		sql = " select p.purchase_date ,pl.prod_num,sum(purchase_qty) "
+			+ " from purchase_list pl,purchase p "
+			+ " where pl.purchase_num = p.purchase_num "
+			+ " GROUP by p.purchase_date,pl.prod_num "
+			+ " having to_char(p.purchase_date,'mm')=06 ";
+		getConnect();
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				MonthTotalDTO dto = new MonthTotalDTO();
+				dto.setPurchaseDate(rs.getDate(1));
+				dto.setProdNum(rs.getString(2));
+				dto.setSumPurchase(rs.getString(3));
+				list.add(dto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close();
+		}
+		return list;
+	}
+	public List<MonthTotalDTO> yearTotal(){
+		List<MonthTotalDTO> list = new ArrayList<MonthTotalDTO>();
+		sql = " select p.purchase_date ,pl.prod_num,sum(purchase_qty) "
+			+ " from purchase_list pl,purchase p "
+			+ " where pl.purchase_num = p.purchase_num "
+			+ " GROUP by p.purchase_date,pl.prod_num "
+			+ " having to_char(p.purchase_date,'yy')=21 ";
+		getConnect();
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				MonthTotalDTO dto = new MonthTotalDTO();
+				dto.setPurchaseDate(rs.getDate(1));
+				dto.setProdNum(rs.getString(2));
+				dto.setSumPurchase(rs.getString(3));
 				list.add(dto);
 			}
 		} catch (SQLException e) {
